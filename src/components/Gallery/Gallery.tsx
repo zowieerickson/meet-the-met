@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react"
 
-type Object = {
-    total: number,
-    objectIDs: number[]
+type ApiResponse = {
+    total: number;
+    objectIDs: number[];
 }
 
-type Item = {
-    objectIDs: number[]
+type ObjectDetail = {
+    objectID: number;
+    title: string;
+    artistDisplayName: string;
+    primaryImageSmall: string;
+
 }
 
 export default function Gallery() {
-    const [data, setData] = useState({})
-    const [items, setItems] = useState<Item[]>([])
+    const [data, setData] = useState<ApiResponse | null>(null)
+    const [items, setItems] = useState<number[]>([])
+    const [details, setDetails] = useState<ObjectDetail[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -25,12 +30,12 @@ export default function Gallery() {
                     throw new Error(`HTTP error! Status: ${response.status}`)
                 }
 
-                const data : any = await response.json()
+                const apiData: ApiResponse = await response.json()
                 
-                setItems(data.objectIDs)
-                setData(data.objectIDs.slice(0, 20))
+                setData(apiData)
+                setItems(apiData.objectIDs.slice(0, 20))
             } catch (err) {
-                setError("idk")
+                setError("Something went wrong loading the gallery.")
             } finally {
                 setLoading(false)
             }
@@ -44,7 +49,7 @@ export default function Gallery() {
         <section>
             <h1>Hello, Gallery!~!</h1>
             {items.map(itemDuh => {
-                return <p>Ok</p>
+                return <p key={itemDuh}>{itemDuh}</p>
             })}
         </section>
     )
